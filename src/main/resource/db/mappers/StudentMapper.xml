@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ahhf.chen.test.dao.StudentDao">
+	<resultMap id="BaseResultMap" type="com.ahhf.chen.test.bean.Student">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="age" jdbcType="TINYINT" property="age" />
+		<result column="source" jdbcType="VARCHAR" property="source" />
+		<result column="ip" jdbcType="VARCHAR" property="ip" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		id, name,age,source,ip
+	</sql>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from student
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from
+		student
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	<insert id="insert" parameterType="com.ahhf.chen.test.bean.Student">
+		insert into student (id, name,
+		age, source,ip)values
+		(#{id},#{name},#{age},#{source},#{ip})
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.ahhf.chen.test.bean.Student">
+		update student
+		<set>
+			<if test="name != null">
+				name = #{name},
+			</if>
+			<if test="age != null">
+				age = #{age},
+			</if>
+			<if test="source != null">
+				source = #{source},
+			</if>
+			<if test="ip != null">
+				ip = #{ip},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+</mapper>

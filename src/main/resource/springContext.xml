@@ -7,5 +7,7 @@
 	default-autowire="byName">
 
 	<import resource="classpath:db/mybatis_config.xml" />
+	
+	<import resource="classpath:redis-config.xml"/>
 
 </beans>

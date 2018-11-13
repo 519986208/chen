@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       ">
+	<!-- POOL配置 -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<!-- 池中可借的最大数 -->
+		<property name="maxTotal" value="${redis.maxTotal}" />
+		<!-- 允许池中空闲的最大连接数 -->
+		<property name="maxIdle" value="${redis.maxIdle}" />
+		<!-- 允许池中空闲的最小连接数 -->
+		<property name="minIdle" value="${redis.minIdle}" />
+		<!-- 获取连接最大等待时间（毫秒） -->
+		<property name="maxWaitMillis" value="${redis.maxWaitMillis}" />
+		<!-- 在获取连接时，是否验证有效性 -->
+		<property name="testOnBorrow" value="${redis.testOnBorrow}" />
+		<!-- 在归还连接时，是否验证有效性 -->
+		<property name="testOnReturn" value="${redis.testOnReturn}" />
+		<!-- 当连接空闲时，是否验证有效性 -->
+		<property name="testWhileIdle" value="${redis.testWhileIdle}" />
+		<!-- 设定间隔没过多少毫秒进行一次后台连接清理的行动 -->
+		<property name="timeBetweenEvictionRunsMillis" value="${redis.timeBetweenEvictionRunsMillis}" />
+	</bean>
+
+	<!-- jedis pool配置 -->
+	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+		<constructor-arg index="0" ref="jedisPoolConfig" />
+		<constructor-arg index="1" value="${redis.host}" />
+		<constructor-arg index="2" value="${redis.port}" />
+		<constructor-arg index="3" value="${redis.timeout}" />
+		<constructor-arg index="4" value="${redis.password}" />
+		<constructor-arg index="5" value="${redis.database}" />
+	</bean>
+
+</beans>

@@ -25,3 +25,18 @@ spring:
     testOnReturn: false
     filters: stat,wall,log4j
     logSlowSql: true
+ 
+redis: 
+  host: localhost
+  port: 6379
+  password: redis1234
+  timeout: 5000 
+  database: 0
+  maxTotal: 100
+  maxIdle: 10
+  minIdle: 10
+  maxWaitMillis: 3000
+  testOnBorrow: true
+  testOnReturn: false
+  testWhileIdle: false
+  timeBetweenEvictionRunsMillis: 3600000

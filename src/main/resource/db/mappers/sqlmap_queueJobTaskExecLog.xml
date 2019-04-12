@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ahhf.chen.distask.dao.QueueJobTaskExecLogDAO">
+	<resultMap id="BaseResultMap"
+		type="com.ahhf.chen.distask.dao.dataobject.QueueJobTaskExecLogDO">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="job_exec_log_id" property="jobExecLogId"
+			jdbcType="BIGINT" />
+		<result column="job_id" property="jobId" jdbcType="BIGINT" />
+		<result column="job_task_id" property="jobTaskId" jdbcType="BIGINT" />
+		<result column="start_pos" property="startPos" jdbcType="INTEGER" />
+		<result column="exec_time" property="execTime" jdbcType="TIMESTAMP" />
+		<result column="summary_info" property="summaryInfo" jdbcType="VARCHAR" />
+		<result column="err_msg" property="errMsg" jdbcType="VARCHAR" />
+		<result column="err_stack" property="errStack" jdbcType="VARCHAR" />
+		<result column="creator" property="creator" jdbcType="VARCHAR" />
+		<result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP" />
+		<result column="modifier" property="modifier" jdbcType="VARCHAR" />
+		<result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
+		<result column="is_deleted" property="isDeleted" jdbcType="CHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, job_exec_log_id, job_id, job_task_id, start_pos,
+		exec_time,
+		summary_info, err_msg, err_stack, creator,
+		gmt_created,
+		modifier, gmt_modified, is_deleted
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from queue_job_task_exec_log
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<insert id="insert"
+		parameterType="com.ahhf.chen.distask.dao.dataobject.QueueJobTaskExecLogDO">
+		insert into queue_job_task_exec_log (id,
+		job_exec_log_id, job_id,
+		job_task_id, start_pos, exec_time,
+		summary_info, err_msg,
+		err_stack, creator, gmt_created,
+		modifier,
+		gmt_modified, is_deleted
+		)
+		values (#{id,jdbcType=BIGINT},
+		#{jobExecLogId,jdbcType=BIGINT},
+		#{jobId,jdbcType=BIGINT},
+		#{jobTaskId,jdbcType=BIGINT}, #{startPos,jdbcType=INTEGER},
+		#{execTime,jdbcType=TIMESTAMP},
+		#{summaryInfo,jdbcType=VARCHAR},
+		#{errMsg,jdbcType=VARCHAR}, #{errStack,jdbcType=VARCHAR},
+		#{creator,jdbcType=VARCHAR}, now(),
+		#{modifier,jdbcType=VARCHAR},
+		now(), 'N'
+		)
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.ahhf.chen.distask.dao.dataobject.QueueJobTaskExecLogDO">
+		update queue_job_task_exec_log
+		<set>
+			<if test="jobExecLogId != null">
+				job_exec_log_id = #{jobExecLogId,jdbcType=BIGINT},
+			</if>
+			<if test="jobId != null">
+				job_id = #{jobId,jdbcType=BIGINT},
+			</if>
+			<if test="jobTaskId != null">
+				job_task_id = #{jobTaskId,jdbcType=BIGINT},
+			</if>
+			<if test="startPos != null">
+				start_pos = #{startPos,jdbcType=INTEGER},
+			</if>
+			<if test="execTime != null">
+				exec_time = #{execTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="summaryInfo != null">
+				summary_info = #{summaryInfo,jdbcType=VARCHAR},
+			</if>
+			<if test="errMsg != null">
+				err_msg = #{errMsg,jdbcType=VARCHAR},
+			</if>
+			<if test="errStack != null">
+				err_stack = #{errStack,jdbcType=VARCHAR},
+			</if>
+			<if test="modifier != null">
+				modifier = #{modifier,jdbcType=VARCHAR},
+			</if>
+			gmt_modified = now(),
+			<if test="isDeleted != null">
+				is_deleted = #{isDeleted,jdbcType=CHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+	<select id="selectTaskPageLogByTaskIdAndStartPos" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from queue_job_task_exec_log
+		where job_exec_log_id=#{jobLogId} and
+		job_task_id=#{taskId} and start_pos =
+		#{startPos} and is_deleted='N'
+	</select>
+
+</mapper>

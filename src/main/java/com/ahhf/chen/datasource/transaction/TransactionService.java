@@ -6,6 +6,6 @@ package com.ahhf.chen.datasource.transaction;
 @FunctionalInterface
 public interface TransactionService {
 
-    public Object doInTransaction(TransactionProcesser processer) throws Exception;
+    public Object doInTransaction(TransactionProcesser processer, Object... params) throws Exception;
 
 }

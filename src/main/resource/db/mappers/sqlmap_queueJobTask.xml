@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ahhf.chen.distask.dao.QueueJobTaskDAO">
+	<resultMap id="BaseResultMap"
+		type="com.ahhf.chen.distask.dao.dataobject.QueueJobTaskDO">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="job_id" property="jobId" jdbcType="BIGINT" />
+		<result column="task_code" property="taskCode" jdbcType="VARCHAR" />
+		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
+		<result column="task_status" property="taskStatus" jdbcType="CHAR" />
+		<result column="task_params" property="taskParams" jdbcType="VARCHAR" />
+		<result column="ordering" property="ordering" jdbcType="INTEGER" />
+		<result column="creator" property="creator" jdbcType="VARCHAR" />
+		<result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP" />
+		<result column="modifier" property="modifier" jdbcType="VARCHAR" />
+		<result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
+		<result column="is_deleted" property="isDeleted" jdbcType="CHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, job_id, task_code, task_name, task_status, task_params,
+		ordering,
+		creator, gmt_created,
+		modifier, gmt_modified, is_deleted
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from queue_job_task
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<insert id="insert" parameterType="com.ahhf.chen.distask.dao.dataobject.QueueJobTaskDO">
+		insert into queue_job_task
+		(id, job_id, task_code,
+		task_name, task_status, task_params,
+		ordering,
+		creator, gmt_created,
+		modifier, gmt_modified, is_deleted
+		)
+		values
+		(#{id,jdbcType=BIGINT}, #{jobId,jdbcType=BIGINT},
+		#{taskCode,jdbcType=VARCHAR},
+		#{taskName,jdbcType=VARCHAR},
+		#{taskStatus,jdbcType=CHAR}, #{taskParams,jdbcType=VARCHAR},
+		#{ordering,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR}, now(),
+		#{modifier,jdbcType=VARCHAR}, now(), 'N'
+		)
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.ahhf.chen.distask.dao.dataobject.QueueJobTaskDO">
+		update queue_job_task
+		<set>
+			<if test="jobId != null">
+				job_id = #{jobId,jdbcType=BIGINT},
+			</if>
+			<if test="taskCode != null">
+				task_code = #{taskCode,jdbcType=VARCHAR},
+			</if>
+			<if test="taskName != null">
+				task_name = #{taskName,jdbcType=VARCHAR},
+			</if>
+			<if test="taskStatus != null">
+				task_status = #{taskStatus,jdbcType=CHAR},
+			</if>
+			<if test="taskParams != null">
+				task_params = #{taskParams,jdbcType=VARCHAR},
+			</if>
+			<if test="ordering != null">
+				ordering = #{ordering,jdbcType=INTEGER},
+			</if>
+			<if test="modifier != null">
+				modifier = #{modifier,jdbcType=VARCHAR},
+			</if>
+			gmt_modified = now(),
+			<if test="isDeleted != null">
+				is_deleted = #{isDeleted,jdbcType=CHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+	<select id="selectTasksByJobId" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from queue_job_task where job_id=#{jobId} and is_deleted='N'
+	</select>
+
+	<update id="updateTaskStatusByID">
+		update queue_job_task set task_status = #{newStatus},
+		modifier =
+		#{modifier}, gmt_modified = now() where id = #{id}
+	</update>
+
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:distask="http://ahhf.cly/distask"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+    http://ahhf.cly/distask http://ahhf.cly/distask/distask.xsd">
+
+	<context:property-placeholder location="classpath:server.properties" />
+
+	<distask:task id="1" name="chengly" priority="3" />
+	<distask:task id="2" name="zhangsan" priority="4" />
+	<distask:task id="3" name="lisi" priority="5" />
+	<distask:task id="4" name="wangwu" priority="6" />
+	<distask:task id="${r.id}" name="${r.name}" priority="${r.priority}"
+		relativeTask="taskFactoryBean" />
+		
+</beans>

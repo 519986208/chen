@@ -24,6 +24,7 @@ public class TestAop {
             System.out.println(stu.study(2));
             System.out.println(stu.study(3));
             System.out.println(stu.study(4));
+            Thread.sleep(3000);
         } catch (Exception e) {
             e.printStackTrace();
         }

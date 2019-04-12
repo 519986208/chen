@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ahhf.chen.distask.dao.QueueJobDAO">
+	<resultMap id="BaseResultMap"
+		type="com.ahhf.chen.distask.dao.dataobject.QueueJobDO">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="module_code" property="moduleCode" jdbcType="VARCHAR" />
+		<result column="job_code" property="jobCode" jdbcType="VARCHAR" />
+		<result column="job_name" property="jobName" jdbcType="VARCHAR" />
+		<result column="job_status" property="jobStatus" jdbcType="CHAR" />
+		<result column="business_no" property="businessNo" jdbcType="VARCHAR" />
+		<result column="exec_time" property="execTime" jdbcType="TIMESTAMP" />
+		<result column="exec_count" property="execCount" jdbcType="INTEGER" />
+		<result column="job_params" property="jobParams" jdbcType="VARCHAR" />
+		<result column="creator" property="creator" jdbcType="VARCHAR" />
+		<result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP" />
+		<result column="modifier" property="modifier" jdbcType="VARCHAR" />
+		<result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
+		<result column="is_deleted" property="isDeleted" jdbcType="CHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, module_code, job_code, job_name, job_status,
+		business_no, exec_time,
+		exec_count, job_params, creator,
+		gmt_created,
+		modifier, gmt_modified, is_deleted
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from queue_job
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<insert id="insert" parameterType="com.ahhf.chen.distask.dao.dataobject.QueueJobDO">
+		insert into queue_job (id,
+		module_code, job_code, job_name,
+		job_status, business_no, exec_time,
+		exec_count,
+		job_params, creator, gmt_created,
+		modifier, gmt_modified,
+		is_deleted
+		)
+		values (#{id,jdbcType=BIGINT},
+		#{moduleCode,jdbcType=VARCHAR},
+		#{jobCode,jdbcType=VARCHAR},
+		#{jobName,jdbcType=VARCHAR},
+		#{jobStatus,jdbcType=CHAR},
+		#{businessNo,jdbcType=VARCHAR},
+		#{execTime,jdbcType=TIMESTAMP},
+		#{execCount,jdbcType=INTEGER},
+		#{jobParams,jdbcType=VARCHAR},
+		#{creator,jdbcType=VARCHAR}, now(),
+		#{modifier,jdbcType=VARCHAR},
+		now(), 'N'
+		)
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.ahhf.chen.distask.dao.dataobject.QueueJobDO">
+		update queue_job
+		<set>
+			<if test="moduleCode != null">
+				module_code = #{moduleCode,jdbcType=VARCHAR},
+			</if>
+			<if test="jobCode != null">
+				job_code = #{jobCode,jdbcType=VARCHAR},
+			</if>
+			<if test="jobName != null">
+				job_name = #{jobName,jdbcType=VARCHAR},
+			</if>
+			<if test="jobStatus != null">
+				job_status = #{jobStatus,jdbcType=CHAR},
+			</if>
+			<if test="businessNo != null">
+				business_no = #{businessNo,jdbcType=VARCHAR},
+			</if>
+			<if test="execTime != null">
+				exec_time = #{execTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gmtCreated != null">
+				gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+			</if>
+			<if test="execCount != null">
+				exec_count = #{execCount,jdbcType=INTEGER},
+			</if>
+			<if test="jobParams != null">
+				job_params = #{jobParams,jdbcType=VARCHAR},
+			</if>
+			<if test="modifier != null">
+				modifier = #{modifier,jdbcType=VARCHAR},
+			</if>
+			gmt_modified = now(),
+			<if test="isDeleted != null">
+				is_deleted = #{isDeleted,jdbcType=CHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+	<select id="selectPendingJobByPage" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from queue_job
+		where module_code=#{moduleCode} and job_status
+		in('C','L','F')
+		and exec_time between DATE_SUB(now(), INTERVAL 3 DAY)
+		and now()
+		and is_deleted = 'N' limit #{start},#{limit}
+	</select>
+
+	<select id="selectJobByBusinessNo" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from queue_job
+		where module_code=#{moduleCode} and
+		business_no=#{businessNo} and job_code
+		= #{jobCode} and is_deleted =
+		'N'
+	</select>
+
+	<update id="updateJobStatusByID">
+		update queue_job set job_status = #{newStatus},
+		exec_time = now(), modifier
+		= #{modifier}, gmt_modified = now()
+		where id
+		= #{id} and job_status=#{oldStatus} and modifier=#{oldModifier}
+	</update>
+
+	<update id="updateJobExecCountByID">
+		update queue_job set exec_count = exec_count+1,
+		exec_time = now(), modifier
+		= #{modifier}, gmt_modified = now() where
+		id = #{id}
+	</update>
+
+
+</mapper>

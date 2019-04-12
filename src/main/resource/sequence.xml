@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/tx    http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       "
+	default-lazy-init="false" default-autowire="byName"
+	default-dependency-check="none">
+
+	<bean id="seqQueueJob" class="com.ahhf.chen.datasource.sequence.impl.DefaultSequence">
+		<property name="sequenceDao" ref="idSequenceDao" />
+		<!-- sequence生成器名 -->
+		<property name="name" value="seq_queue_job" />
+	</bean>
+	<bean id="seqQueueJobTask" class="com.ahhf.chen.datasource.sequence.impl.DefaultSequence">
+		<property name="sequenceDao" ref="idSequenceDao" />
+		<!-- sequence生成器名 -->
+		<property name="name" value="seq_queue_job_task" />
+	</bean>
+	<bean id="seqQueueJobExecLog" class="com.ahhf.chen.datasource.sequence.impl.DefaultSequence">
+		<property name="sequenceDao" ref="idSequenceDao" />
+		<!-- sequence生成器名 -->
+		<property name="name" value="seq_queue_job_exec_log" />
+	</bean>
+	<bean id="seqQueueJobTaskExecLog" class="com.ahhf.chen.datasource.sequence.impl.DefaultSequence">
+		<property name="sequenceDao" ref="idSequenceDao" />
+		<!-- sequence生成器名 -->
+		<property name="name" value="seq_queue_job_task_exec_log" />
+	</bean>
+
+</beans>

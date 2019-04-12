@@ -1,0 +1,31 @@
+<jobConfigs>
+	<moduleJobConfigs moduleCode="testModule" moduleName="testModule" bossWokerCount="4" wokerThreadSize="4">
+		<jobConfig jobCode="testJob" jobName="测试Job">
+			<jobProcessBean>TestJobBean</jobProcessBean>
+			<lockTime>60</lockTime>
+			<jobTaskConfigs> 
+				<jobTaskConfig taskCode="testTask" taskName="测试Task">
+					<taskProcessBean>TestTaskBean</taskProcessBean>
+					<ordering>10</ordering>
+				</jobTaskConfig>
+			</jobTaskConfigs>
+		</jobConfig>
+		<jobConfig jobCode="testManyTaskJob" jobName="测试多TaskJob">
+			<jobProcessBean>TestJobBean</jobProcessBean>
+			<jobTaskConfigs> 
+				<jobTaskConfig taskCode="manyTaskOne" taskName="测试多Task1">
+					<taskProcessBean>TestManyTaskBean1</taskProcessBean>
+					<ordering>1</ordering>
+				</jobTaskConfig>
+				<jobTaskConfig taskCode="manyTaskTwo" taskName="测试多Task2">
+					<taskProcessBean>TestManyTaskBean2</taskProcessBean>
+					<ordering>2</ordering>
+				</jobTaskConfig>
+				<jobTaskConfig taskCode="manyTaskThree" taskName="测试多Task3">
+					<taskProcessBean>TestManyTaskBean3</taskProcessBean>
+					<ordering>3</ordering>
+				</jobTaskConfig>
+			</jobTaskConfigs>
+		</jobConfig>
+	</moduleJobConfigs>
+</jobConfigs>

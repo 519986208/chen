@@ -31,7 +31,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Object doInTransaction(TransactionProcesser processer) throws RuntimeException {
+    public Object doInTransaction(TransactionProcesser processer, Object... params) throws RuntimeException {
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         TransactionStatus status = transactionManager.getTransaction(def);

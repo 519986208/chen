@@ -19,18 +19,17 @@ import okhttp3.Response;
 
 public class OkHttp {
 
-    private static OkHttp       netRequest = new OkHttp();
+    private static OkHttp netRequest = new OkHttp();
 
-    private static OkHttpClient okHttpClient;             // OKHttp网络请求
+    private static OkHttpClient okHttpClient; // OKHttp网络请求
 
     private OkHttp() {
         // 初始化okhttp 创建一个OKHttpClient对象，一个app里最好实例化一个此对象
         okHttpClient = new OkHttpClient();
-        okHttpClient.newBuilder().connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS);
+        okHttpClient.newBuilder().connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS);
     }
 
-    //-------------对外提供的方法Start--------------------------------
+    // -------------对外提供的方法Start--------------------------------
     /**
      * 建立网络框架，获取网络数据，异步get请求（Form）
      */
@@ -51,7 +50,7 @@ public class OkHttp {
     public static String doPostJsonRequest(String url, Map<String, Object> params) {
         return netRequest.innerPostJsonAsync(url, params);
     }
-    //-------------对外提供的方法End--------------------------------
+    // -------------对外提供的方法End--------------------------------
 
     /**
      * 异步get请求（Form），内部实现方法
@@ -96,7 +95,7 @@ public class OkHttp {
             builder.add(key, value);
         }
         requestBody = builder.build();
-        //结果返回
+        // 结果返回
         Request request = new Request.Builder().url(url).post(requestBody).build();
         return excute(request);
     }
@@ -113,7 +112,11 @@ public class OkHttp {
     private String excute(Request request) {
         try {
             Response response = okHttpClient.newCall(request).execute();
-            return response.body().string();
+            if (response.isSuccessful()) {
+                return response.body().string();
+            } else {
+                throw new RuntimeException("http请求错误");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -28,7 +26,6 @@ import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.Pipeline;
-import redis.clients.jedis.Response;
 import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.ScanResult;
 
@@ -40,33 +37,16 @@ public class TestRedis {
     private DistributeRedisService distributeRedisService;
 
     @Resource
-    private JedisPool              pool;
+    private JedisPool pool;
 
     @Test
     public void distibuteTest() {
         String key = "abcde";
-        int size = 20;
-        CountDownLatch latch = new CountDownLatch(size);
-        final Semaphore sp = new Semaphore(2);
         try {
-            for (int i = 0; i < size; i++) {
-                sp.acquire();
-                new Thread(new Runnable() {
-                    public void run() {
-                        System.out.println("线程" + distributeRedisService.tryGetDistributedLock(key, 10 * 1000));//10秒
-                        latch.countDown();
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        sp.release();
-                    }
-                }).start();
-            }
-            latch.await();
-            distributeRedisService.releaseDistributedLock(key);
-            System.out.println("释放完毕后：" + distributeRedisService.tryGetDistributedLock(key, 10));
+            String value = UUID.randomUUID().toString();
+            System.out.println("线程" + distributeRedisService.tryGetDistributedLock(key, value, 10 * 1000));// 10秒
+            distributeRedisService.releaseDistributedLock(key, value);
+            System.out.println("释放完毕后：" + distributeRedisService.tryGetDistributedLock(key, value, 10));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,7 +60,7 @@ public class TestRedis {
             jedis.lpush(key, UUID.randomUUID().toString());
             jedis.lpush(key, UUID.randomUUID().toString());
             jedis.lpush(key, UUID.randomUUID().toString());
-            //            jedis.rpush(key, strings);
+            // jedis.rpush(key, strings);
             jedis.expire(key, 3);
             Long llen = jedis.llen(key);
             System.out.println("length: " + llen);
@@ -107,12 +87,12 @@ public class TestRedis {
             String key = "Hash-chengly";
             Jedis jedis = pool.getResource();
 
-            //先清空
+            // 先清空
             jedis.flushAll();
 
-            jedis.hset(key, "dianzan", "1");//点赞
-            jedis.hset(key, "cai", "1");//踩
-            jedis.hset(key, "guanzhu", "1");//关注
+            jedis.hset(key, "dianzan", "1");// 点赞
+            jedis.hset(key, "cai", "1");// 踩
+            jedis.hset(key, "guanzhu", "1");// 关注
             jedis.expire(key, 30);
 
             jedis.hincrBy(key, "dianzan", 3);
@@ -222,19 +202,12 @@ public class TestRedis {
     @Test
     public void ttl() {
         try {
-            String key = "cch112engliyao1341";
+            String key = "chen13455432";
             Jedis jedis = pool.getResource();
-
             Pipeline pipelined = jedis.pipelined();
-
-            Response<Long> incr = pipelined.incr(key);
+            pipelined.incr(key);
             pipelined.expire(key, 5);
-            //            System.out.println(incr.get());
-
-            //            pipelined.multi();
-
             pipelined.syncAndReturnAll();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -248,7 +221,12 @@ public class TestRedis {
                 HostAndPort node = new HostAndPort("localhost", 6380 + i);
                 nodes.add(node);
             }
-            JedisCluster jedisCluster = new JedisCluster(nodes);//(node, connectionTimeout, soTimeout, maxAttempts, password, poolConfig);
+            JedisCluster jedisCluster = new JedisCluster(nodes);// (node,
+                                                                // connectionTimeout,
+                                                                // soTimeout,
+                                                                // maxAttempts,
+                                                                // password,
+                                                                // poolConfig);
             jedisCluster.set("hello", "world");
             System.out.println(jedisCluster.get("hello"));
             jedisCluster.setex("abc1", 1, "abc1value");

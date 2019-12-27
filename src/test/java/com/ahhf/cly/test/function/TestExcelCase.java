@@ -6,39 +6,27 @@ import java.util.UUID;
 
 import org.junit.Test;
 
-import com.ahhf.chen.excel.file.FileExcel;
-import com.ahhf.chen.excel.read.ExcelRead;
-import com.ahhf.chen.excel.write.ExcelWrite;
+import com.ahhf.chen.excel.ExcelUtils;
 import com.ahhf.cly.test.domain.PersonInfo;
 import com.alibaba.fastjson.JSON;
 
 public class TestExcelCase {
 
-    //读取硬盘上的excel文件，转换成对象
+    // 读取硬盘上的excel文件，转换成对象
     @Test
     public void testReadFileSystem() {
-        try {
-            ExcelRead er = new FileExcel("d:/home/ax啊.xlsx");
-            List<PersonInfo> objs = er.readAsObjList(PersonInfo.class);
-            for (PersonInfo exportInfo : objs) {
-                System.out.println(JSON.toJSONString(exportInfo));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        List<PersonInfo> list = ExcelUtils.read("d:/person.xlsx", PersonInfo.class);
+        for (PersonInfo object : list) {
+            System.out.println(JSON.toJSONString(object));
         }
     }
 
-    //往硬盘上写excel文件
+    // 往硬盘上写excel文件
     @Test
     public void testWriteFileSystem() {
-        try {
-            String fileName = "d:/home/write.xlsx";
-            List<PersonInfo> list = getList();//生产随机的对象
-            ExcelWrite ew = new FileExcel(fileName);
-            ew.writeObjList(list, fileName);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String fileName = "d:/write.xlsx";
+        List<PersonInfo> list = getList();// 生产随机的对象
+        ExcelUtils.write(fileName, PersonInfo.class, list);
     }
 
     private List<PersonInfo> getList() {

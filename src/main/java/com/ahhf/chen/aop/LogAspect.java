@@ -1,13 +1,7 @@
 package com.ahhf.chen.aop;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Enumeration;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.alibaba.fastjson.JSON;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -16,10 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSON;
-
-import lombok.extern.slf4j.Slf4j;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Enumeration;
 
 /**
  * 定义切面，记录日志<br>
@@ -29,8 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 @Slf4j
 public class LogAspect {
-
-    private static final String LINE = "\n";
 
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
@@ -48,11 +44,10 @@ public class LogAspect {
         String methodName = joinPoint.getSignature().getName();
         Object[] arguments = joinPoint.getArgs();
         StringBuilder builder = new StringBuilder();
-        builder.append(LINE);
-        builder.append("请求路径：" + requestPath).append(LINE);
-        builder.append("http请求方式：" + method).append(LINE);
-        builder.append("类名：" + targetName).append(LINE);
-        builder.append("方法名：" + methodName).append(LINE);
+        builder.append("请求路径：" + requestPath);
+        builder.append("http请求方式：" + method);
+        builder.append("类名：" + targetName);
+        builder.append("方法名：" + methodName);
         builder.append("参数：");
         int length = arguments.length;
         for (int i = 0; i < length; i++) {
@@ -71,16 +66,14 @@ public class LogAspect {
                 log.warn("记录日志的json序列化异常 " + obj);
             }
         }
-        builder.append(LINE);
 
         Object returnValue = joinPoint.proceed();
-        builder.append("开始时间：").append(SIMPLE_DATE_FORMAT.format(new Date(startTime))).append(LINE);
+        builder.append("开始时间：").append(SIMPLE_DATE_FORMAT.format(new Date(startTime)));
         long currentTimeMillis = System.currentTimeMillis();
-        builder.append("结束时间：").append(SIMPLE_DATE_FORMAT.format(new Date(currentTimeMillis))).append(LINE);
-        builder.append("总共耗时： ").append(currentTimeMillis - startTime).append("毫秒").append(LINE);
+        builder.append("结束时间：").append(SIMPLE_DATE_FORMAT.format(new Date(currentTimeMillis)));
+        builder.append("总共耗时： ").append(currentTimeMillis - startTime).append("毫秒");
         builder.append("方法返回值：");
         builder.append(JSON.toJSONString(returnValue));
-        builder.append(LINE);
         log.info(builder.toString());
         return returnValue;
     }
@@ -133,8 +126,11 @@ public class LogAspect {
         if (obj == null) {
             return true;
         }
-        if (obj instanceof HttpServletRequest || obj instanceof BindingResult || obj instanceof HttpServletResponse
-                || obj instanceof HttpSession) {
+        if (obj instanceof HttpServletRequest //
+                || obj instanceof BindingResult //
+                || obj instanceof HttpServletResponse //
+                || obj instanceof HttpSession //
+                || obj instanceof MultipartFile) {
             return true;
         }
         return false;
